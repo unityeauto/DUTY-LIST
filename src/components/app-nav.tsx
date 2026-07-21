@@ -17,10 +17,10 @@ import {
   LogOut,
   Menu,
 } from 'lucide-react'
-import { useState } from 'react'
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -46,7 +46,6 @@ const navItems = [
 
 export default function AppNav({ profile }: { profile: Profile }) {
   const pathname = usePathname()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const filteredNavItems = navItems.filter((item) => item.roles.includes(profile.role))
 
@@ -98,47 +97,48 @@ export default function AppNav({ profile }: { profile: Profile }) {
       {/* Mobile header */}
       <header className="md:hidden sticky top-0 z-10 flex items-center justify-between h-16 px-4 border-b border-slate-200 bg-white">
         <h1 className="text-lg font-semibold text-slate-900">Volvo Duty</h1>
-        <DropdownMenu open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+        <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost" size="sm" aria-label="Open menu">
                 <Menu className="h-5 w-5" />
               </Button>
             }
           />
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>
-              <div className="flex flex-col space-y-1">
-                <p className="text-sm font-medium">{profile.full_name || 'User'}</p>
-                <p className="text-xs text-slate-500 capitalize">{profile.role}</p>
-              </div>
-            </DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel>
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium">{profile.full_name || 'User'}</p>
+                  <p className="text-xs text-slate-500 capitalize">{profile.role}</p>
+                </div>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             {filteredNavItems.map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
               return (
-                <DropdownMenuItem key={item.href}>
-                  <Link
-                    href={item.href}
-                    className={cn('flex items-center gap-2 w-full', isActive && 'bg-slate-100')}
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    <Icon className="h-4 w-4" />
-                    {item.label}
-                  </Link>
+                <DropdownMenuItem
+                  key={item.href}
+                  className={cn(isActive && 'bg-slate-100')}
+                  render={<Link href={item.href} />}
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.label}
                 </DropdownMenuItem>
               )
             })}
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <form action={logoutAction} className="w-full">
-                <button type="submit" className="flex items-center gap-2 w-full">
-                  <LogOut className="h-4 w-4" />
-                  Logout
-                </button>
-              </form>
-            </DropdownMenuItem>
+            <form action={logoutAction}>
+              <DropdownMenuItem
+                nativeButton
+                render={<button type="submit" className="w-full" />}
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </DropdownMenuItem>
+            </form>
           </DropdownMenuContent>
         </DropdownMenu>
       </header>
