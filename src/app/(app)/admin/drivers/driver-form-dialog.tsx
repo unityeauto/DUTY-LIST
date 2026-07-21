@@ -57,7 +57,7 @@ export default function DriverFormDialog({
         onOpenChange(false)
         onSuccess()
       }
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred')
     } finally {
       setLoading(false)

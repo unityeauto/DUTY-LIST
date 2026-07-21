@@ -55,7 +55,7 @@ export default function BusFormDialog({
         onOpenChange(false)
         onSuccess()
       }
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred')
     } finally {
       setLoading(false)

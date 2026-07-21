@@ -83,6 +83,7 @@ npm install
    - `supabase/migrations/0001_init.sql` - Creates tables and triggers
    - `supabase/migrations/0002_rls.sql` - Enables Row Level Security
    - `supabase/migrations/0003_seed_schedules.sql` - Seeds all 49 duty schedules from the Excel sheet
+   - `supabase/migrations/0005_grants.sql` - Table-level grants for the `authenticated` role (required — without it every query fails with `permission denied`)
 
 ### 5. Create Initial Users
 

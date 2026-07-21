@@ -5,6 +5,7 @@ import {
   ColumnDef,
   ColumnFiltersState,
   SortingState,
+  TableMeta,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -27,7 +28,7 @@ import { Input } from '@/components/ui/input'
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  meta?: any
+  meta?: TableMeta<TData>
 }
 
 export function DataTable<TData, TValue>({

@@ -57,15 +57,23 @@ export async function getRecentAssignments(limit: number = 10) {
 
   if (error) throw error
 
-  return (data || []).map(item => ({
+  type Joined = {
+    id: string
+    duty_date: string
+    duty_schedules: { schedule_number: string }
+    drivers: { batch_number: string; name: string }
+    buses: { bus_number: string }
+  }
+
+  return ((data || []) as unknown as Joined[]).map(item => ({
     id: item.id,
     duty_date: item.duty_date,
-    schedule: { schedule_number: (item.duty_schedules as any).schedule_number },
+    schedule: { schedule_number: item.duty_schedules.schedule_number },
     driver: {
-      batch_number: (item.drivers as any).batch_number,
-      name: (item.drivers as any).name
+      batch_number: item.drivers.batch_number,
+      name: item.drivers.name
     },
-    bus: { bus_number: (item.buses as any).bus_number }
+    bus: { bus_number: item.buses.bus_number }
   }))
 }
 

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Offline — Volvo Duty Manager</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+    .card {
+      text-align: center;
+      padding: 2rem;
+      max-width: 24rem;
+    }
+    .icon { font-size: 3rem; margin-bottom: 1rem; }
+    h1 { font-size: 1.25rem; margin: 0 0 0.5rem; }
+    p { color: #64748b; font-size: 0.875rem; line-height: 1.5; margin: 0 0 1.5rem; }
+    button {
+      background: #1e3a5f;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 0.625rem 1.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    button:hover { background: #2d4a73; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">📡</div>
+    <h1>You're offline</h1>
+    <p>
+      Duty allocation needs an active connection so conflict checks always use
+      fresh data. Reconnect and try again.
+    </p>
+    <button onclick="location.reload()">Retry</button>
+  </div>
+</body>
+</html>

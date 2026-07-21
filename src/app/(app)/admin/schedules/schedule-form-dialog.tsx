@@ -57,7 +57,7 @@ export default function ScheduleFormDialog({
         onOpenChange(false)
         onSuccess()
       }
-    } catch (error) {
+    } catch {
       toast.error('An unexpected error occurred')
     } finally {
       setLoading(false)

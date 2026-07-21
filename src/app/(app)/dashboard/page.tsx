@@ -1,6 +1,6 @@
 import { getDashboardStats, getRecentAssignments, getAttendanceTrend } from '@/lib/queries/dashboard'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Users, Bus, ClipboardList, CheckCircle2, XCircle } from 'lucide-react'
+import { Users, Bus, ClipboardList, CheckCircle2 } from 'lucide-react'
 import { format } from 'date-fns'
 import AttendanceChart from './attendance-chart'
 import Link from 'next/link'
@@ -149,7 +149,7 @@ export default async function DashboardPage() {
             <CardContent className="p-6">
               <ClipboardList className="h-8 w-8 text-blue-600 mb-3" />
               <h3 className="font-semibold text-slate-900 mb-1">Assign Duties</h3>
-              <p className="text-sm text-slate-600">Create today's duty assignments</p>
+              <p className="text-sm text-slate-600">Create today&apos;s duty assignments</p>
             </CardContent>
           </Card>
         </Link>
