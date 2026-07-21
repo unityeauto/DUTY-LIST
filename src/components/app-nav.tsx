@@ -99,11 +99,13 @@ export default function AppNav({ profile }: { profile: Profile }) {
       <header className="md:hidden sticky top-0 z-10 flex items-center justify-between h-16 px-4 border-b border-slate-200 bg-white">
         <h1 className="text-lg font-semibold text-slate-900">Volvo Duty</h1>
         <DropdownMenu open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-          <DropdownMenuTrigger>
-            <Button variant="ghost" size="sm">
-              <Menu className="h-5 w-5" />
-            </Button>
-          </DropdownMenuTrigger>
+          <DropdownMenuTrigger
+            render={
+              <Button variant="ghost" size="sm">
+                <Menu className="h-5 w-5" />
+              </Button>
+            }
+          />
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>
               <div className="flex flex-col space-y-1">
