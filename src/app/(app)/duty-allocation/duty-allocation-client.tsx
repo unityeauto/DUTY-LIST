@@ -232,7 +232,6 @@ export default function DutyAllocationClient({
               selection.bus_id !== (saved?.bus_id ?? null) ||
               selection.driver_id !== (saved?.driver_id ?? null)
             const isSaving = savingScheduleId === schedule.id && isPending
-            const firstTrip = schedule.schedule_trips[0]
 
             return (
               <Card
@@ -266,17 +265,22 @@ export default function DutyAllocationClient({
                     </span>
                   </div>
 
-                  {/* Trips summary */}
-                  {schedule.schedule_trips.length > 0 && firstTrip && (
-                    <div className="flex items-center gap-1.5 text-xs text-slate-600">
-                      <Clock className="h-3.5 w-3.5 shrink-0" />
-                      <span>
-                        {formatTime(firstTrip.start_time)} · {firstTrip.route_name}
-                        {schedule.schedule_trips.length > 1 &&
-                          ` +${schedule.schedule_trips.length - 1} more trip${
-                            schedule.schedule_trips.length > 2 ? 's' : ''
-                          }`}
-                      </span>
+                  {/* Trips — all shown with time + route/stations */}
+                  {schedule.schedule_trips.length > 0 && (
+                    <div className="space-y-1">
+                      {schedule.schedule_trips.map((trip) => (
+                        <div
+                          key={trip.id}
+                          className="flex items-center gap-1.5 text-xs text-slate-600"
+                        >
+                          <Clock className="h-3.5 w-3.5 shrink-0" />
+                          <span className="font-mono font-medium text-slate-700">
+                            {formatTime(trip.start_time)}
+                          </span>
+                          <span>·</span>
+                          <span>{trip.route_name}</span>
+                        </div>
+                      ))}
                     </div>
                   )}
 

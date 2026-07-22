@@ -25,16 +25,25 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
+export type DataTableFilter = {
+  /** Column id to filter on — must match a column with `accessorKey`/`id` */
+  columnId: string
+  placeholder: string
+}
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   meta?: TableMeta<TData>
+  /** Text filter inputs to render above the table */
+  filters?: DataTableFilter[]
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   meta,
+  filters = [],
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])

@@ -1,7 +1,11 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { dutyScheduleSchema, scheduleTripSchema } from '@/lib/validations/schemas'
+import {
+  scheduleTripSchema,
+  scheduleWithTripsSchema,
+  type ScheduleWithTripsInput,
+} from '@/lib/validations/schemas'
 import { revalidatePath } from 'next/cache'
 import { getUserProfile } from './auth'
 
@@ -48,73 +52,112 @@ export async function getScheduleWithTrips(id: string) {
   return data
 }
 
-export async function createSchedule(formData: FormData) {
+/**
+ * Create a schedule together with its trips (start time + route/station).
+ * Trip sequence is derived from row order in the form.
+ */
+export async function createSchedule(input: ScheduleWithTripsInput) {
   const profile = await getUserProfile()
 
   if (!profile || profile.role !== 'admin') {
     return { error: 'Unauthorized: Admin access required' }
   }
 
-  const validated = dutyScheduleSchema.safeParse({
-    schedule_number: formData.get('schedule_number'),
-    return_code: formData.get('return_code') || undefined,
-    total_km: Number(formData.get('total_km')),
-    is_active: formData.get('is_active') === 'true',
-  })
+  const validated = scheduleWithTripsSchema.safeParse(input)
 
   if (!validated.success) {
     return { error: validated.error.issues[0].message }
   }
 
+  const { trips, ...scheduleData } = validated.data
+
   const supabase = await createClient()
 
-  const { data, error } = await supabase
+  const { data: schedule, error } = await supabase
     .from('duty_schedules')
-    .insert(validated.data)
+    .insert(scheduleData)
     .select()
     .single()
 
   if (error) {
     if (error.code === '23505') {
-      return { error: `Schedule ${validated.data.schedule_number} already exists` }
+      return { error: `Schedule ${scheduleData.schedule_number} already exists` }
     }
     return { error: error.message }
   }
 
+  const { error: tripsError } = await supabase.from('schedule_trips').insert(
+    trips.map((trip, index) => ({
+      schedule_id: schedule.id,
+      trip_sequence: index + 1,
+      start_time: trip.start_time,
+      route_name: trip.route_name,
+    }))
+  )
+
+  if (tripsError) {
+    // Roll back the schedule so a failed trip insert doesn't leave a tripless schedule
+    await supabase.from('duty_schedules').delete().eq('id', schedule.id)
+    return { error: tripsError.message }
+  }
+
   revalidatePath('/admin/schedules')
-  return { success: true, data }
+  return { success: true, data: schedule }
 }
 
-export async function updateSchedule(id: string, formData: FormData) {
+/**
+ * Update a schedule and replace its trips with the submitted list.
+ */
+export async function updateSchedule(id: string, input: ScheduleWithTripsInput) {
   const profile = await getUserProfile()
 
   if (!profile || profile.role !== 'admin') {
     return { error: 'Unauthorized: Admin access required' }
   }
 
-  const validated = dutyScheduleSchema.safeParse({
-    schedule_number: formData.get('schedule_number'),
-    return_code: formData.get('return_code') || undefined,
-    total_km: Number(formData.get('total_km')),
-    is_active: formData.get('is_active') === 'true',
-  })
+  const validated = scheduleWithTripsSchema.safeParse(input)
 
   if (!validated.success) {
     return { error: validated.error.issues[0].message }
   }
 
+  const { trips, ...scheduleData } = validated.data
+
   const supabase = await createClient()
 
   const { error } = await supabase
     .from('duty_schedules')
-    .update(validated.data)
+    .update(scheduleData)
     .eq('id', id)
 
   if (error) {
     if (error.code === '23505') {
-      return { error: `Schedule ${validated.data.schedule_number} already exists` }
+      return { error: `Schedule ${scheduleData.schedule_number} already exists` }
     }
     return { error: error.message }
+  }
+
+  // Replace trips: delete existing, insert submitted rows in order
+  const { error: deleteError } = await supabase
+    .from('schedule_trips')
+    .delete()
+    .eq('schedule_id', id)
+
+  if (deleteError) {
+    return { error: deleteError.message }
+  }
+
+  const { error: tripsError } = await supabase.from('schedule_trips').insert(
+    trips.map((trip, index) => ({
+      schedule_id: id,
+      trip_sequence: index + 1,
+      start_time: trip.start_time,
+      route_name: trip.route_name,
+    }))
+  )
+
+  if (tripsError) {
+    return { error: tripsError.message }
   }
 
   revalidatePath('/admin/schedules')
