@@ -106,6 +106,9 @@ export default function SchedulesClient({ initialSchedules }: SchedulesClientPro
       <DataTable
         columns={columns}
         data={initialSchedules}
+        filters={[
+          { columnId: 'schedule_number', placeholder: 'Filter by schedule number...' },
+        ]}
         meta={{
           onView: handleView,
           onEdit: handleEdit,

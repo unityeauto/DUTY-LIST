@@ -98,6 +98,10 @@ export default function DriversClient({ initialDrivers }: DriversClientProps) {
       <DataTable
         columns={columns}
         data={initialDrivers}
+        filters={[
+          { columnId: 'name', placeholder: 'Filter by name...' },
+          { columnId: 'batch_number', placeholder: 'Filter by batch number...' },
+        ]}
         meta={{
           onEdit: handleEdit,
           onToggleStatus: handleToggleStatus,

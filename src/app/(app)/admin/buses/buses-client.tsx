@@ -98,6 +98,9 @@ export default function BusesClient({ initialBuses }: BusesClientProps) {
       <DataTable
         columns={columns}
         data={initialBuses}
+        filters={[
+          { columnId: 'bus_number', placeholder: 'Filter by bus number...' },
+        ]}
         meta={{
           onEdit: handleEdit,
           onToggleStatus: handleToggleStatus,

@@ -66,48 +66,23 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-4 flex-wrap">
-        {table.getColumn('name') && (
-          <Input
-            placeholder="Filter by name..."
-            value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-            onChange={(event) =>
-              table.getColumn('name')?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-        )}
-        {table.getColumn('batch_number') && (
-          <Input
-            placeholder="Filter by batch number..."
-            value={(table.getColumn('batch_number')?.getFilterValue() as string) ?? ''}
-            onChange={(event) =>
-              table.getColumn('batch_number')?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-        )}
-        {table.getColumn('bus_number') && (
-          <Input
-            placeholder="Filter by bus number..."
-            value={(table.getColumn('bus_number')?.getFilterValue() as string) ?? ''}
-            onChange={(event) =>
-              table.getColumn('bus_number')?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-        )}
-        {table.getColumn('schedule_number') && (
-          <Input
-            placeholder="Filter by schedule number..."
-            value={(table.getColumn('schedule_number')?.getFilterValue() as string) ?? ''}
-            onChange={(event) =>
-              table.getColumn('schedule_number')?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-        )}
-      </div>
+      {filters.length > 0 && (
+        <div className="flex items-center gap-4 flex-wrap">
+          {filters.map((f) => {
+            const col = table.getColumn(f.columnId)
+            if (!col) return null
+            return (
+              <Input
+                key={f.columnId}
+                placeholder={f.placeholder}
+                value={(col.getFilterValue() as string) ?? ''}
+                onChange={(e) => col.setFilterValue(e.target.value)}
+                className="max-w-sm"
+              />
+            )
+          })}
+        </div>
+      )}
       <div className="rounded-md border">
         <Table>
           <TableHeader>
