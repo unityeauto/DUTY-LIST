@@ -165,11 +165,12 @@ export default function ReportExportClient({ report }: Props) {
               <thead>
                 <tr className="bg-slate-100 text-slate-700">
                   <th className="border border-slate-300 px-3 py-2 text-left">Sch. No.</th>
-                  <th className="border border-slate-300 px-3 py-2 text-left">Bus No.</th>
-                  <th className="border border-slate-300 px-3 py-2 text-left">Driver</th>
                   <th className="border border-slate-300 px-3 py-2 text-left">Trips</th>
-                  <th className="border border-slate-300 px-3 py-2 text-center">Return</th>
                   <th className="border border-slate-300 px-3 py-2 text-right">KM</th>
+                  <th className="border border-slate-300 px-3 py-2 text-left">Driver</th>
+                  <th className="border border-slate-300 px-3 py-2 text-left">Bus No.</th>
+                  <th className="border border-slate-300 px-3 py-2 text-center">Diesel</th>
+                  <th className="border border-slate-300 px-3 py-2 text-center">Date</th>
                 </tr>
               </thead>
               <tbody>
@@ -177,13 +178,6 @@ export default function ReportExportClient({ report }: Props) {
                   <tr key={row.schedule_number} className="even:bg-slate-50">
                     <td className="border border-slate-300 px-3 py-2 font-semibold whitespace-nowrap">
                       {row.schedule_number}
-                    </td>
-                    <td className="border border-slate-300 px-3 py-2 font-mono whitespace-nowrap">
-                      {row.bus_number}
-                    </td>
-                    <td className="border border-slate-300 px-3 py-2 whitespace-nowrap">
-                      <div className="font-medium">{row.driver_batch}</div>
-                      <div className="text-xs text-slate-600">{row.driver_name}</div>
                     </td>
                     <td className="border border-slate-300 px-3 py-2">
                       {row.trips.length === 0 ? (
@@ -201,18 +195,27 @@ export default function ReportExportClient({ report }: Props) {
                         </div>
                       )}
                     </td>
-                    <td className="border border-slate-300 px-3 py-2 text-center whitespace-nowrap">
-                      {row.return_code ?? '—'}
-                    </td>
                     <td className="border border-slate-300 px-3 py-2 text-right whitespace-nowrap">
                       {row.total_km}
+                    </td>
+                    <td className="border border-slate-300 px-3 py-2 whitespace-nowrap">
+                      <div className="font-medium">{row.driver_batch}</div>
+                      <div className="text-xs text-slate-600">{row.driver_name}</div>
+                    </td>
+                    <td className="border border-slate-300 px-3 py-2 font-mono whitespace-nowrap">
+                      {row.bus_number}
+                    </td>
+                    {/* Diesel is recorded by hand after refuelling — left blank on purpose */}
+                    <td className="border border-slate-300 px-3 py-2 min-w-16" />
+                    <td className="border border-slate-300 px-3 py-2 text-center whitespace-nowrap">
+                      {format(parseISO(report.date), 'dd-MM-yyyy')}
                     </td>
                   </tr>
                 ))}
               </tbody>
               <tfoot>
                 <tr className="bg-slate-100 font-semibold">
-                  <td className="border border-slate-300 px-3 py-2" colSpan={5}>
+                  <td className="border border-slate-300 px-3 py-2" colSpan={2}>
                     Total — {report.rows.length} duties
                   </td>
                   <td className="border border-slate-300 px-3 py-2 text-right">
@@ -220,6 +223,7 @@ export default function ReportExportClient({ report }: Props) {
                       .reduce((sum, r) => sum + Number(r.total_km), 0)
                       .toFixed(1)}
                   </td>
+                  <td className="border border-slate-300 px-3 py-2" colSpan={4} />
                 </tr>
               </tfoot>
             </table>
