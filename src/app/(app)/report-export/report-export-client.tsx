@@ -203,13 +203,12 @@ export default function ReportExportClient({ report }: Props) {
                       <div className="text-xs text-slate-600">{row.driver_name}</div>
                     </td>
                     <td className="border border-slate-300 px-3 py-2 font-mono whitespace-nowrap">
-                      {row.bus_number}
+                      {row.bus_number.split('-').pop()}
                     </td>
                     {/* Diesel is recorded by hand after refuelling — left blank on purpose */}
                     <td className="border border-slate-300 px-3 py-2 min-w-16" />
-                    <td className="border border-slate-300 px-3 py-2 text-center whitespace-nowrap">
-                      {format(parseISO(report.date), 'dd-MM-yyyy')}
-                    </td>
+                    {/* Date is filled in by hand after printing — left blank on purpose */}
+                    <td className="border border-slate-300 px-3 py-2 min-w-24" />
                   </tr>
                 ))}
               </tbody>
